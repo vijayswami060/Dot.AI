@@ -1,0 +1,333 @@
+/* dot.ai Ultimate Professional Premium Theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+:root {
+    color-scheme: dark !important;
+    --bg-dark: #020617;
+    --card-bg: rgba(15, 23, 42, 0.6);
+    --border-glow: rgba(139, 92, 246, 0.4);
+    --accent-violet: #8B5CF6;
+    --accent-cyan: #06B6D4;
+    --accent-gold: #F59E0B;
+    --text-main: #F8FAFC;
+    --text-muted: #94A3B8;
+    --sidebar-width: 320px;
+}
+
+/* Base App Setup - Ultra Premium Horizon */
+.stApp {
+    background: radial-gradient(circle at top right, #1e1b4b, #020617) !important;
+    font-family: 'Outfit', sans-serif !important;
+    color: var(--text-main) !important;
+}
+
+/* Global Text Visibility Fix */
+.stMarkdown, p, span, li, h1, h2, h3, h4, h5, h6, label {
+    color: var(--text-main) !important;
+}
+
+/* --- Floating Middle-Top Title --- */
+.main-title-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: -60px; /* Pull to absolute top */
+    margin-bottom: 2rem;
+    z-index: 100;
+}
+
+.main-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(3rem, 6vw, 5rem);
+    font-weight: 900;
+    text-align: center;
+    
+    /* Cinematic Text Gradient matching theme */
+    background: linear-gradient(110deg, #FFFFFF 0%, #06B6D4 35%, #8B5CF6 70%, #FFFFFF 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    letter-spacing: -3px;
+    margin: 0;
+    padding: 10px;
+    
+    /* Ultra Glow & Float Animation */
+    animation: neuralFloatGlow 4s linear infinite, floatPulse 4s ease-in-out infinite;
+    filter: drop-shadow(0px 4px 30px rgba(139, 92, 246, 0.4));
+}
+
+@keyframes neuralFloatGlow {
+    0% { background-position: 0% center; }
+    100% { background-position: 200% center; }
+}
+
+@keyframes floatPulse {
+    0%, 100% { transform: translateY(0px) scale(1); filter: drop-shadow(0px 4px 30px rgba(139, 92, 246, 0.4)); }
+    50% { transform: translateY(-8px) scale(1.02); filter: drop-shadow(0px 10px 40px rgba(6, 182, 212, 0.6)); }
+}
+
+.tagline {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 3rem;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+/* Chat Input Overhaul - Integrated & Glassy */
+[data-testid="stChatInput"] {
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: blur(40px) saturate(200%) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+    border-radius: 40px !important;
+    padding: 10px !important;
+    box-shadow: 0 -10px 50px rgba(0,0,0,0.5) !important;
+    bottom: 2rem !important;
+}
+
+/* Fix inner backgrounds without breaking the outer container */
+[data-testid="stChatInput"] div[data-baseweb="textarea"],
+[data-testid="stChatInput"] form {
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 1.05rem !important;
+    padding: 10px !important;
+    background: transparent !important;
+}
+
+[data-testid="stChatInput"] textarea::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Style the attachment (+) and mic icons nicely */
+[data-testid="stChatInput"] button {
+    background: transparent !important;
+    border: none !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+[data-testid="stChatInput"] svg {
+    color: var(--accent-cyan) !important;
+    fill: var(--accent-cyan) !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-testid="stChatInput"] button:hover {
+    transform: scale(1.1) !important;
+}
+
+[data-testid="stChatInput"] button:hover svg {
+    filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8)) !important;
+}
+
+[data-testid="stChatInput"]:focus-within {
+    border-color: var(--accent-violet) !important;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.5), 0 0 40px rgba(6, 182, 212, 0.2) !important;
+    animation: borderBreathe 2s infinite alternate !important;
+}
+
+@keyframes borderBreathe {
+    from { box-shadow: 0 0 15px rgba(139, 92, 246, 0.3); }
+    to { box-shadow: 0 0 25px rgba(139, 92, 246, 0.7), 0 0 20px rgba(6, 182, 212, 0.3); }
+}
+
+/* Aero-Glass Chat Bubbles */
+@keyframes bubbleSweep {
+    0% { opacity: 0; transform: translateX(-30px) scale(0.95); filter: blur(10px); }
+    100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0); }
+}
+
+[data-testid="stChatMessage"] {
+    animation: bubbleSweep 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    background: rgba(15, 23, 42, 0.4) !important;
+    backdrop-filter: blur(30px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(30px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 28px !important;
+    padding: 1.8rem !important;
+    margin-bottom: 1.5rem !important;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    color: var(--text-main) !important;
+}
+
+[data-testid="stChatMessage"] p,
+[data-testid="stChatMessage"] li {
+    font-size: 1.05rem !important;
+    line-height: 1.8 !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    letter-spacing: 0.3px !important;
+}
+
+[data-testid="stChatMessage"] ul,
+[data-testid="stChatMessage"] ol {
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+    padding-left: 2rem !important;
+}
+
+[data-testid="stChatMessage"] strong {
+    color: var(--accent-cyan) !important;
+    font-weight: 600 !important;
+    text-shadow: 0 0 10px rgba(6, 182, 212, 0.4) !important;
+}
+
+[data-testid="stChatMessage"] em {
+    color: var(--accent-violet) !important;
+    font-style: italic !important;
+    background: rgba(139, 92, 246, 0.1) !important;
+    padding: 0 4px !important;
+    border-radius: 4px !important;
+}
+
+/* User Bubble Unique Accent */
+[data-testid="stChatMessage"]:has(.stChatMessageAvatar) {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(15, 23, 42, 0.5)) !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+}
+
+[data-testid="stChatMessage"]:hover {
+    transform: translateY(-5px) scale(1.01);
+    background: rgba(30, 41, 59, 0.6) !important;
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.2) !important;
+}
+
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background: rgba(15, 23, 42, 0.7) !important;
+    backdrop-filter: blur(15px) !important;
+    border-right: 1px solid rgba(139, 92, 246, 0.2) !important;
+}
+
+/* Hide Streamlit components */
+[data-testid="stHeader"], footer {
+    display: none !important;
+}
+
+/* Custom Scrollbar - Cyberpunk Style */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(to bottom, var(--accent-violet), var(--accent-cyan));
+    border-radius: 10px;
+}
+
+/* Premium Vision Image Styling */
+[data-testid="stChatMessage"] img {
+    border-radius: 20px !important;
+    border: 1px solid rgba(139, 92, 246, 0.4) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(139, 92, 246, 0.2) !important;
+    margin-top: 15px !important;
+    max-width: 100% !important;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+}
+
+[data-testid="stChatMessage"] img:hover {
+    transform: scale(1.02) !important;
+    box-shadow: 0 15px 50px rgba(139, 92, 246, 0.4) !important;
+    border-color: var(--accent-cyan) !important;
+}
+
+/* Holographic Shimmer Effect for Buttons & Cards */
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.stButton>button, .neural-dossier-card {
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.1), rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1)) !important;
+    background-size: 200% 100% !important;
+    animation: shimmer 5s infinite linear !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(15px) !important;
+}
+
+.stButton>button:hover {
+    transform: translateY(-2px) !important;
+    border-color: var(--accent-cyan) !important;
+    box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3) !important;
+}
+
+/* Diagnostic Relay Styling */
+.neural-relay-box {
+    background: rgba(2, 6, 23, 0.6) !important;
+    border-left: 3px solid var(--accent-gold) !important;
+    padding: 12px 20px !important;
+    border-radius: 8px;
+    font-family: 'Space Grotesk', sans-serif !important;
+    font-size: 0.9rem !important;
+    color: var(--accent-gold) !important;
+    opacity: 0.8;
+}
+
+/* Navigation Hide */
+section[data-testid='stSidebar'],
+button[data-testid='stSidebarCollapseButton'] {
+    display: none !important;
+}
+
+/* Floating Sky Menu */
+[data-testid="stAppViewContainer"] .stPopover>button {
+    position: fixed !important;
+    top: 20px !important;
+    left: 20px !important;
+    z-index: 10000 !important;
+    background: rgba(15, 23, 42, 0.4) !important;
+    backdrop-filter: blur(40px) saturate(200%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    width: 60px !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.5rem !important;
+    color: #F8FAFC !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-testid="stAppViewContainer"] .stPopover>button:hover {
+    background: rgba(139, 92, 246, 0.2) !important;
+    border-color: var(--accent-cyan) !important;
+    transform: scale(1.05) rotate(90deg) !important;
+}
+
+/* Deep Search Outputs */
+.neural-dossier-card {
+    border-radius: 24px !important;
+    padding: 30px !important;
+    margin-bottom: 25px !important;
+    transition: all 0.4s ease !important;
+}
+
+.neural-dossier-card:hover {
+    transform: perspective(1000px) rotateX(2deg) translateY(-5px) !important;
+    border-color: #8B5CF6 !important;
+    box-shadow: 0 25px 60px rgba(139, 92, 246, 0.2) !important;
+}
+
+.search-hub-header {
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.05), transparent) !important;
+    padding: 30px 10px !important;
+    border-radius: 30px !important;
+    margin-bottom: 40px !important;
+}

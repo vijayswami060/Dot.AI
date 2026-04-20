@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dot.ai | Sentient Core</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+        :root {
+            --accent-primary: #E81CFF;
+            --accent-secondary: #40C9FF;
+            --bg-deep: #020617;
+            --transition-cinema: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: var(--bg-deep);
+            font-family: 'Outfit', sans-serif;
+            color: white;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: radial-gradient(circle at center, rgba(64, 201, 255, 0.05) 0%, rgba(2, 6, 23, 1) 70%);
+        }
+
+        .ui-layout {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+            padding: 1.5rem 2.5rem 1.5rem 2.5rem;
+            box-sizing: border-box;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            width: 100%;
+        }
+
+        .logo-box {
+            grid-column: 2;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            opacity: 0;
+            margin: 0 !important;
+            text-align: center;
+            background: linear-gradient(110deg, #FFFFFF 0%, #06B6D4 35%, #8B5CF6 70%, #FFFFFF 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 4px 20px rgba(139, 92, 246, 0.4));
+            animation: textShine 4s linear infinite, floatTitle 4s ease-in-out infinite;
+            transition: var(--transition-cinema);
+        }
+
+        .logo-box span {
+            font-weight: 300;
+            color: var(--accent-secondary); /* This is Cyan in the root */
+            -webkit-text-fill-color: var(--accent-secondary);
+            letter-spacing: -1px;
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.8);
+        }
+
+        @keyframes textShine {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        @keyframes floatTitle {
+            0%, 100% { transform: translateY(0); filter: drop-shadow(0px 4px 20px rgba(139, 92, 246, 0.4)); }
+            50% { transform: translateY(-5px); filter: drop-shadow(0px 10px 25px rgba(6, 182, 212, 0.6)); }
+        }
+
+        .neural-stats {
+            grid-column: 1;
+            display: flex;
+            gap: 20px;
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+
+        .stat-item span {
+            color: var(--accent-secondary);
+            font-weight: 700;
+        }
+
+        .status-pill {
+            grid-column: 3;
+            justify-self: end;
+            background: rgba(232, 28, 255, 0.05);
+            border: 1px solid rgba(232, 28, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+            color: #E2E8F0;
+        }
+
+        .pulse-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--accent-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--accent-primary);
+            animation: breathe 2s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+            0%, 100% { opacity: 0.4; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        main {
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 2vh;
+        }
+
+        .tagline {
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            font-weight: 200;
+            color: #F8FAFC;
+            margin-bottom: 2rem;
+            padding: 0 40px; /* Side padding for tagline */
+            opacity: 0;
+            margin: 0 !important;
+            text-align: center;
+        }
+
+        .tagline span {
+            font-weight: 500;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .prompt-tray {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding-bottom: 30px; /* Bottom spacing */
+        }
+
+        .glass-btn {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.8rem 1.5rem;
+            color: #94A3B8;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition-cinema);
+            pointer-events: auto;
+            opacity: 0;
+            transform: translateY(20px);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .glass-btn i {
+            font-style: normal;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .glass-btn:hover {
+            background: rgba(232, 28, 255, 0.1);
+            border-color: rgba(64, 201, 255, 0.3);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), 0 0 20px rgba(232, 28, 255, 0.1);
+        }
+
+        .glass-btn:hover i {
+            opacity: 1;
+            text-shadow: 0 0 10px var(--accent-secondary);
+        }
+
+        .ambient-scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* --- Responsive Shifts [V48] --- */
+        @media (max-width: 768px) {
+            .logo-box {
+                font-size: 1.8rem;
+                letter-spacing: -1px;
+            }
+            
+            header {
+                grid-template-columns: auto 1fr auto;
+                padding: 15px 15px 0 15px;
+            }
+
+            .neural-stats {
+                gap: 10px;
+                font-size: 0.55rem;
+            }
+
+            .status-pill {
+                padding: 5px 12px;
+                font-size: 0.6rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+                padding: 0 20px;
+                margin-bottom: 1rem !important;
+            }
+
+            .prompt-tray {
+                gap: 10px;
+                padding-bottom: 20px;
+            }
+
+            .glass-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.75rem;
+                gap: 8px;
+            }
+            
+            .glass-btn i {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-scanline"></div>
+    <div id="canvas-container"></div>
+
+    <div class="ui-layout">
+        <header>
+            <div class="neural-stats" id="stats">
+                <div class="stat-item">Sync: <span id="syncVal">98.4</span>%</div>
+                <div class="stat-item">Nodes: <span>1,024</span></div>
+            </div>
+            <div class="logo-box" id="logo">dot<span>.ai</span></div>
+            <div class="status-pill" id="statusPill">
+                <div class="pulse-dot"></div>
+                Sentient Core Online
+            </div>
+        </header>
+
+        <main>
+            <h2 class="tagline" id="tagline">Tap into the <span>liquid intelligence</span> of the universe.</h2>
+            <div class="prompt-tray">
+                <div class="glass-btn" onclick="sendPrompt('Visualize a fluid dynamic AI brain.')">
+                    <i>🌌</i> Fluid Vision
+                </div>
+                <div class="glass-btn" onclick="sendPrompt('Analyze the emotional resonance of color.')">
+                    <i>🧬</i> Resonance Scan
+                </div>
+                <div class="glass-btn" onclick="sendPrompt('Generate a cyberpunk neon cityscape.')">
+                    <i>⚡</i> Neon Synthesis
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+
+    <script>
+        let scene, camera, renderer, orbGroup, coreMesh, outerMesh, particles;
+        const mouse = new THREE.Vector2();
+        const targetMouse = new THREE.Vector2();
+        
+        let initialPositions = []; // To store original vertices for JS-based morphing
+
+        function init() {
+            try {
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+                camera.position.z = 9;
+                
+                renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+                createOrb();
+                createLights();
+                createParticles();
+                
+                animate();
+                revealUI();
+                startStatsEngine();
+            } catch (err) {
+                console.error("Initialization Error:", err);
+            }
+        }
+
+        function startStatsEngine() {
+            const sync = document.getElementById('syncVal');
+            if(!sync) return;
+            setInterval(() => {
+                const val = (98 + Math.random() * 1.5).toFixed(1);
+                sync.innerText = val;
+            }, 2000);
+        }
+
+        function createLights() {
+            const ambient = new THREE.AmbientLight(0x202040, 2);
+            scene.add(ambient);
+
+            const pinkLight = new THREE.PointLight(0xE81CFF, 5, 50);
+            pinkLight.position.set(5, 5, 5);
+            scene.add(pinkLight);
+
+            const cyanLight = new THREE.PointLight(0x40C9FF, 5, 50);
+            cyanLight.position.set(-5, -5, 5);
+            scene.add(cyanLight);
+            
+            const bottomLight = new THREE.PointLight(0xE81CFF, 2, 50);
+            bottomLight.position.set(0, -5, -5);
+            scene.add(bottomLight);
+        }
+
+        function createParticles() {
+            const geo = new THREE.BufferGeometry();
+            const pos = new Float32Array(500 * 3);
+            for(let i=0; i<500; i++) {
+                pos[i*3] = (Math.random() - 0.5) * 15;
+                pos[i*3+1] = (Math.random() - 0.5) * 15;
+                pos[i*3+2] = (Math.random() - 0.5) * 15;
+            }
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            const mat = new THREE.PointsMaterial({
+                color: 0x40C9FF,
+                size: 0.05,
+                transparent: true,
+                opacity: 0.4,
+                blending: THREE.AdditiveBlending
+            });
+            particles = new THREE.Points(geo, mat);
+            scene.add(particles);
+        }
+
+        function createOrb() {
+            orbGroup = new THREE.Group();
+            
+            // Dynamic scale factor for mobile
+            const isMobile = window.innerWidth < 768;
+            const scale = isMobile ? 0.75 : 1.0;
+
+            // Core - Dense Icosahedron
+            const coreGeo = new THREE.IcosahedronGeometry(1.4 * scale, 16);
+            const coreMat = new THREE.MeshStandardMaterial({
+                color: 0x020617,
+                emissive: 0xE81CFF,
+                emissiveIntensity: 0.3,
+                roughness: 0.2,
+                metalness: 0.9,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.4
+            });
+            coreMesh = new THREE.Mesh(coreGeo, coreMat);
+            
+            // Save initial positions for JS displacement
+            const positions = coreMesh.geometry.attributes.position;
+            initialPositions = [];
+            for (let i = 0; i < positions.count; i++) {
+                initialPositions.push(new THREE.Vector3(positions.getX(i), positions.getY(i), positions.getZ(i)));
+            }
+            
+            orbGroup.add(coreMesh);
+
+            // Outer Shell - Glassy Torus Nodes
+            const outerGeo = new THREE.IcosahedronGeometry(1.7 * scale, 2);
+            const outerMat = new THREE.MeshStandardMaterial({
+                color: 0x40C9FF,
+                emissive: 0x40C9FF,
+                emissiveIntensity: 0.1,
+                wireframe: true,
+                transparent: true,
+                opacity: 0.2
+            });
+            outerMesh = new THREE.Mesh(outerGeo, outerMat);
+            orbGroup.add(outerMesh);
+
+            // Glowing Center Sphere
+            const centerGeo = new THREE.SphereGeometry(0.9 * scale, 32, 32);
+            const centerMat = new THREE.MeshBasicMaterial({
+                color: 0x40C9FF,
+                transparent: true,
+                opacity: 0.1,
+                blending: THREE.AdditiveBlending
+            });
+            const centerMesh = new THREE.Mesh(centerGeo, centerMat);
+            orbGroup.add(centerMesh);
+
+            scene.add(orbGroup);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const time = performance.now() * 0.001;
+
+            // Interpolate mouse
+            targetMouse.x += (mouse.x - targetMouse.x) * 0.05;
+            targetMouse.y += (mouse.y - targetMouse.y) * 0.05;
+
+            // Javascript-based Vertex Displacement (Simulating liquid without GLSL errors)
+            if(coreMesh) {
+                const positions = coreMesh.geometry.attributes.position;
+                let intensity = 0.1 + (Math.abs(targetMouse.x) + Math.abs(targetMouse.y)) * 0.1;
+                
+                for (let i = 0; i < positions.count; i++) {
+                    const initPos = initialPositions[i];
+                    // Create a pseudo-noise continuous wave
+                    const wave1 = Math.sin(initPos.x * 2.0 + time * 1.5);
+                    const wave2 = Math.cos(initPos.y * 2.0 + time * 1.5);
+                    const wave3 = Math.sin(initPos.z * 2.0 + time * 1.5);
+                    
+                    const displacement = (wave1 * wave2 * wave3) * intensity;
+                    
+                    const newX = initPos.x + (initPos.x * displacement);
+                    const newY = initPos.y + (initPos.y * displacement);
+                    const newZ = initPos.z + (initPos.z * displacement);
+                    
+                    positions.setXYZ(i, newX, newY, newZ);
+                }
+                positions.needsUpdate = true;
+            }
+
+            if(orbGroup) {
+                orbGroup.rotation.y = time * 0.2 + (targetMouse.x * 0.8);
+                orbGroup.rotation.x = targetMouse.y * 0.5;
+                orbGroup.position.y = Math.sin(time) * 0.15;
+            }
+            
+            if(outerMesh) {
+                outerMesh.rotation.y = -time * 0.1;
+                outerMesh.rotation.x = time * 0.15;
+                outerMesh.scale.setScalar(1.0 + Math.sin(time*2)*0.05);
+            }
+            
+            if(particles) {
+                particles.rotation.y = time * 0.05;
+            }
+
+            // Camera Parallax Depth
+            camera.position.x = targetMouse.x * 1.0;
+            camera.position.y = targetMouse.y * 1.0;
+            camera.lookAt(0, 0, 0);
+
+            renderer.render(scene, camera);
+        }
+
+        function revealUI() {
+            if(typeof gsap !== 'undefined') {
+                const tl = gsap.timeline();
+                tl.to("#logo", { opacity: 1, y: 0, duration: 1, ease: "power3.out" })
+                  .to("#stats", { opacity: 1, x: 0, duration: 1, ease: "power3.out" }, "-=0.7")
+                  .to("#statusPill", { opacity: 1, duration: 1 }, "-=0.5")
+                  .to("#tagline", { opacity: 1, y: 0, duration: 1.5, ease: "expo.out" }, "-=0.5")
+                  .to(".glass-btn", { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: "back.out(1.5)" }, "-=1.0");
+            } else {
+                document.getElementById('logo').style.opacity = 1;
+                document.getElementById('logo').style.transform = "translateY(0)";
+                document.getElementById('stats').style.opacity = 1;
+                document.getElementById('stats').style.transform = "translateX(0)";
+                document.getElementById('tagline').style.opacity = 1;
+                document.getElementById('tagline').style.transform = "translateY(0)";
+                document.getElementById('statusPill').style.opacity = 1;
+                const btns = document.querySelectorAll('.glass-btn');
+                btns.forEach(b => { b.style.opacity = 1; b.style.transform = "translateY(0)"; });
+            }
+        }
+
+        function sendPrompt(val) {
+            // Use URL search params to signal the parent Streamlit app
+            const parentLoc = window.parent.location;
+            const url = new URL(parentLoc.href);
+            url.searchParams.set('p', val);
+            parentLoc.href = url.toString();
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        init();
+    </script>
+</body>
+</html>
